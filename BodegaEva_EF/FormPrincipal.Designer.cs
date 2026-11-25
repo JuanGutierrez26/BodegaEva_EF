@@ -14,6 +14,11 @@ namespace BodegaEva_EF
         private Panel Sidebar;
         private TableLayoutPanel SidebarFilas;
         private Panel PanelContenido;
+        private BotonRedondeado BtnInicio;
+        private BotonRedondeado BtnVenta;
+        private BotonRedondeado BtnFiado;
+        private BotonRedondeado BtnHistorial;
+        private BotonRedondeado BtnIncidencias;
         private BotonRedondeado BtnSalir;
 
         /// <summary>
@@ -96,7 +101,7 @@ namespace BodegaEva_EF
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 1,
-                RowCount = 5,
+                RowCount = 6,
                 Margin = Padding.Empty,
                 Padding = new Padding(10, 8, 10, 0),
                 CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
@@ -104,21 +109,48 @@ namespace BodegaEva_EF
             };
             menu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
-            string[] opciones = { "Venta", "Fiado", "Historial", "Incidencias" };
+            string[] opciones = { "Inicio", "Venta", "Fiado", "Historial", "Incidencias" };
             for (int i = 0; i < opciones.Length; i++)
             {
                 menu.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
-                menu.Controls.Add(new BotonRedondeado
+                var boton = new BotonRedondeado
                 {
                     Text = opciones[i],
                     Estilo = EstiloBoton.Secundario,
                     Dock = DockStyle.Fill,
                     Margin = new Padding(0, 0, 0, 8)
-                }, 0, i);
+                };
+                menu.Controls.Add(boton, 0, i);
+
+                if (i == 0)
+                {
+                    BtnInicio = boton;
+                    BtnInicio.Click += BtnInicio_Click;
+                }
+                else if (i == 1)
+                {
+                    BtnVenta = boton;
+                    BtnVenta.Click += BtnVenta_Click;
+                }
+                else if (i == 2)
+                {
+                    BtnFiado = boton;
+                    BtnFiado.Click += BtnFiado_Click;
+                }
+                else if (i == 3)
+                {
+                    BtnHistorial = boton;
+                    BtnHistorial.Click += BtnHistorial_Click;
+                }
+                else if (i == 4)
+                {
+                    BtnIncidencias = boton;
+                    BtnIncidencias.Click += BtnIncidencias_Click;
+                }
             }
 
             menu.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            menu.Controls.Add(new Panel { Dock = DockStyle.Fill, BackColor = Tema.Blanco }, 0, 4);
+            menu.Controls.Add(new Panel { Dock = DockStyle.Fill, BackColor = Tema.Blanco }, 0, 5);
 
             SidebarFilas.Controls.Add(menu, 0, 1);
 

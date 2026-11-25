@@ -11,6 +11,11 @@ namespace BodegaEva_EF.Vistas
         private readonly Label lblWhatsApp;
         private readonly Label lblVentas;
 
+        public event EventHandler? NuevaVentaSolicitada;
+        public event EventHandler? FiadoSolicitado;
+        public event EventHandler? HistorialSolicitado;
+        public event EventHandler? IncidenciasSolicitado;
+
         public UcInicio()
         {
             Dock = DockStyle.Fill;
@@ -100,7 +105,7 @@ namespace BodegaEva_EF.Vistas
             return panel;
         }
 
-        private static Control CrearAccesos()
+        private Control CrearAccesos()
         {
             var cuadricula = new TableLayoutPanel
             {
@@ -121,31 +126,36 @@ namespace BodegaEva_EF.Vistas
                 TipoIcono.Venta,
                 "Nueva venta",
                 "Registrar productos, gestionar pedido y cobrar o fiar",
-                Tema.PrimarioClaro, Tema.Primario), 0, 0);
+                Tema.PrimarioClaro, Tema.Primario,
+                () => NuevaVentaSolicitada?.Invoke(this, EventArgs.Empty)), 0, 0);
 
             cuadricula.Controls.Add(CrearTarjetaAcceso(
                 TipoIcono.Fiado,
                 "Fiado",
                 "Consultar deudas pendientes y registrar abonos",
-                Tema.AmbarClaro, Tema.AmbarOscuro), 1, 0);
+                Tema.AmbarClaro, Tema.AmbarOscuro,
+                () => FiadoSolicitado?.Invoke(this, EventArgs.Empty)), 1, 0);
 
             cuadricula.Controls.Add(CrearTarjetaAcceso(
                 TipoIcono.Historial,
                 "Historial",
                 "Buscar boletas emitidas y revisar su estado",
-                Tema.EncabezadoTabla, Tema.TextoPrincipal), 0, 1);
+                Tema.EncabezadoTabla, Tema.TextoPrincipal,
+                () => HistorialSolicitado?.Invoke(this, EventArgs.Empty)), 0, 1);
 
             cuadricula.Controls.Add(CrearTarjetaAcceso(
                 TipoIcono.Incidencias,
                 "Incidencias",
                 "Revertir la última venta o el último abono aplicado",
-                Tema.ErrorClaro, Tema.Error), 1, 1);
+                Tema.ErrorClaro, Tema.Error,
+                () => IncidenciasSolicitado?.Invoke(this, EventArgs.Empty)), 1, 1);
 
             return cuadricula;
         }
 
         private static PanelRedondeado CrearTarjetaAcceso(
-            TipoIcono icono, string titulo, string descripcion, Color fondoIcono, Color trazoIcono)
+            TipoIcono icono, string titulo, string descripcion, Color fondoIcono, Color trazoIcono,
+            Action? alHacerClick = null)
         {
             var tarjeta = new PanelRedondeado
             {
@@ -225,6 +235,10 @@ namespace BodegaEva_EF.Vistas
 
             tarjeta.Controls.Add(contenido);
             tarjeta.ConectarHijos();
+
+            if (alHacerClick != null)
+                tarjeta.Click += (s, e) => alHacerClick();
+
             return tarjeta;
         }
 

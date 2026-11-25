@@ -12,6 +12,9 @@ namespace BodegaEva_EF.Vistas
         private readonly Label lblVentas;
 
         public event EventHandler? NuevaVentaSolicitada;
+        public event EventHandler? FiadoSolicitado;
+        public event EventHandler? HistorialSolicitado;
+        public event EventHandler? IncidenciasSolicitado;
 
         public UcInicio()
         {
@@ -130,19 +133,22 @@ namespace BodegaEva_EF.Vistas
                 TipoIcono.Fiado,
                 "Fiado",
                 "Consultar deudas pendientes y registrar abonos",
-                Tema.AmbarClaro, Tema.AmbarOscuro), 1, 0);
+                Tema.AmbarClaro, Tema.AmbarOscuro,
+                () => FiadoSolicitado?.Invoke(this, EventArgs.Empty)), 1, 0);
 
             cuadricula.Controls.Add(CrearTarjetaAcceso(
                 TipoIcono.Historial,
                 "Historial",
                 "Buscar boletas emitidas y revisar su estado",
-                Tema.EncabezadoTabla, Tema.TextoPrincipal), 0, 1);
+                Tema.EncabezadoTabla, Tema.TextoPrincipal,
+                () => HistorialSolicitado?.Invoke(this, EventArgs.Empty)), 0, 1);
 
             cuadricula.Controls.Add(CrearTarjetaAcceso(
                 TipoIcono.Incidencias,
                 "Incidencias",
                 "Revertir la última venta o el último abono aplicado",
-                Tema.ErrorClaro, Tema.Error), 1, 1);
+                Tema.ErrorClaro, Tema.Error,
+                () => IncidenciasSolicitado?.Invoke(this, EventArgs.Empty)), 1, 1);
 
             return cuadricula;
         }

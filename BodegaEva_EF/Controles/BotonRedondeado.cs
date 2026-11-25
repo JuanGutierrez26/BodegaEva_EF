@@ -11,7 +11,8 @@ namespace BodegaEva_EF.Controles
     {
         Primario,
         Peligro,
-        Secundario
+        Secundario,
+        PrimarioClaro
     }
 
     public class BotonRedondeado : Button
@@ -219,6 +220,12 @@ namespace BodegaEva_EF.Controles
                     fondo = Tema.Blanco;
                     texto = Tema.TextoPrincipal;
                     borde = Tema.Borde;
+                    break;
+
+                case EstiloBoton.PrimarioClaro:
+                    fondo = Tema.PrimarioClaro;
+                    texto = Tema.PrimarioOscuro;
+                    borde = Tema.Primario;
                     break;
 
                 default:

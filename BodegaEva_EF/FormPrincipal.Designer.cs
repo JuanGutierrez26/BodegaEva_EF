@@ -14,6 +14,7 @@ namespace BodegaEva_EF
         private Panel Sidebar;
         private TableLayoutPanel SidebarFilas;
         private Panel PanelContenido;
+        private BotonRedondeado BtnVenta;
         private BotonRedondeado BtnSalir;
 
         /// <summary>
@@ -108,13 +109,20 @@ namespace BodegaEva_EF
             for (int i = 0; i < opciones.Length; i++)
             {
                 menu.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
-                menu.Controls.Add(new BotonRedondeado
+                var boton = new BotonRedondeado
                 {
                     Text = opciones[i],
                     Estilo = EstiloBoton.Secundario,
                     Dock = DockStyle.Fill,
                     Margin = new Padding(0, 0, 0, 8)
-                }, 0, i);
+                };
+                menu.Controls.Add(boton, 0, i);
+
+                if (i == 0)
+                {
+                    BtnVenta = boton;
+                    BtnVenta.Click += BtnVenta_Click;
+                }
             }
 
             menu.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));

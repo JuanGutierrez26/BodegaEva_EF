@@ -9,8 +9,12 @@ namespace BodegaEva_EF.Controles
 {
     public class IndicadorPasos : Control
     {
+        private const int Margen = 6;
+
         private string[] pasos = { "Productos", "Pedido", "Pago", "Confirmación" };
         private int pasoActual = 1;
+
+        public event Action<int>? PasoSeleccionado;
 
         [DefaultValue(1)]
         public int PasoActual
@@ -66,6 +70,43 @@ namespace BodegaEva_EF.Controles
             return true;
         }
 
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            for (int i = 0; i < pasos.Length; i++)
+            {
+                if (Celda(i).Contains(e.Location))
+                {
+                    PasoSeleccionado?.Invoke(i + 1);
+                    return;
+                }
+            }
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            bool sobrePaso = false;
+            for (int i = 0; i < pasos.Length; i++)
+            {
+                if (Celda(i).Contains(e.Location))
+                {
+                    sobrePaso = true;
+                    break;
+                }
+            }
+
+            Cursor = sobrePaso ? Cursors.Hand : Cursors.Default;
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            Cursor = Cursors.Default;
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -85,36 +126,35 @@ namespace BodegaEva_EF.Controles
                 g.DrawPath(borde, ruta);
             }
 
-            const int margen = 6;
-            int anchoCelda = (Width - margen * 2) / pasos.Length;
-            int altoCelda = Height - margen * 2 - 1;
-
             for (int i = 0; i < pasos.Length; i++)
-            {
-                var celda = new Rectangle(margen + i * anchoCelda, margen, anchoCelda - 4, altoCelda);
-                DibujarPaso(g, celda, i);
-            }
+                DibujarPaso(g, Celda(i), i);
+        }
+
+        private Rectangle Celda(int indice)
+        {
+            int anchoCelda = (Width - Margen * 2) / pasos.Length;
+            int altoCelda = Height - Margen * 2 - 1;
+            return new Rectangle(Margen + indice * anchoCelda, Margen, anchoCelda - 4, altoCelda);
         }
 
         private void DibujarPaso(Graphics g, Rectangle celda, int indice)
         {
             int numero = indice + 1;
             bool activo = numero == pasoActual;
-            bool hecho = numero < pasoActual;
 
             if (activo)
             {
                 int radio = Math.Min(Tema.RadioBoton + 4, celda.Height / 2 - 1);
                 using GraphicsPath pildora = Tema.RutaRedondeada(celda, radio);
-                using var relleno = new SolidBrush(Tema.Primario);
+                using var relleno = new SolidBrush(Tema.PrimarioOscuro);
                 g.FillPath(relleno, pildora);
             }
 
-            Color fondoCirculo = activo ? Tema.Blanco : hecho ? Tema.PrimarioClaro : Tema.EncabezadoTabla;
-            Color textoCirculo = (activo || hecho) ? Tema.Primario : Tema.TextoSecundario;
-            Color textoPaso = activo ? Tema.Blanco : hecho ? Tema.TextoPrincipal : Tema.TextoSecundario;
+            Color fondoCirculo = activo ? Tema.Blanco : Tema.EncabezadoTabla;
+            Color textoCirculo = activo ? Tema.PrimarioOscuro : Tema.TextoSecundario;
+            Color textoPaso = activo ? Tema.Blanco : Tema.TextoSecundario;
             Font fuente = activo ? Tema.Negrita : Tema.Normal;
-            string textoNumero = hecho ? "✓" : numero.ToString();
+            string textoNumero = numero.ToString();
 
             const int diametro = 22;
             const int separacion = 8;

@@ -73,6 +73,11 @@ namespace BodegaEva_EF.Servicios
 
         public static bool ValidarSiguientePago(out string motivo)
         {
+            return ValidarSiguientePago(true, out motivo);
+        }
+
+        public static bool ValidarSiguientePago(bool retirarSiInvalido, out string motivo)
+        {
             if (PedidoEnCurso == null)
                 throw new InvalidOperationException("No hay un pedido en curso.");
 
@@ -88,7 +93,9 @@ namespace BodegaEva_EF.Servicios
                 return true;
             }
 
-            Datos.ColaPagos.Retirar(pago.Codigo);
+            if (retirarSiInvalido)
+                Datos.ColaPagos.Retirar(pago.Codigo);
+
             PagoValidado = false;
             Datos.NotificarCambio();
             return false;
